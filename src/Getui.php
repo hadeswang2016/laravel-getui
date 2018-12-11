@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace Earnp\Getui;
 
 use App\Http\Controllers\Controller;
@@ -192,14 +192,19 @@ class Getui
         $tagList=$choice["tagList"];
         $age = $choice["age"];
 
+//        $cdt = new \AppConditions();
+//        $cdt->addCondition(\AppConditions::PHONE_TYPE, $phoneTypeList);
+//        $cdt->addCondition(\AppConditions::REGION, $provinceList);
+//        $cdt->addCondition(\AppConditions::TAG, $tagList);
+//        $cdt->addCondition("age", $age);
+
         $cdt = new \AppConditions();
-        $cdt->addCondition(AppConditions::PHONE_TYPE, $phoneTypeList);
-        $cdt->addCondition(AppConditions::REGION, $provinceList);
-        $cdt->addCondition(AppConditions::TAG, $tagList);
-        $cdt->addCondition("age", $age);
+//        $cdt->addCondition(\AppConditions::PHONE_TYPE, $phoneTypeList);
+        $cdt->addCondition(\AppConditions::REGION, $provinceList);
+        $cdt->addCondition(\AppConditions::TAG, $tagList);
 
         $message->set_appIdList($appIdList);
-        $message->condition = $cdt;
+        $message->set_conditions($cdt);
 
         $rep = $igt->pushMessageToApp($message);
 
@@ -209,58 +214,59 @@ class Getui
 
     // 透传数据构造
     public static function IGtTransmissionTemplate($data,$config){
-            $template = new \IGtTransmissionTemplate();
-            $template->set_appId(Config::get("getui.APPID"));//应用appid 
-            $template->set_appkey(Config::get("getui.APPKEY"));//应用appkey
-            $template->set_transmissionType(1);//透传消息类型 
-            $template->set_transmissionContent($data);//透传内容
-            // $template->set_duration(BEGINTIME,ENDTIME); //设置ANDROID客户端在此时间区间内展示消息
+        $template = new \IGtTransmissionTemplate();
+        $template->set_appId(Config::get("getui.APPID"));//应用appid
+        $template->set_appkey(Config::get("getui.APPKEY"));//应用appkey
+        $template->set_transmissionType(1);//透传消息类型
+        $template->set_transmissionContent($data);//透传内容
+        // $template->set_duration(BEGINTIME,ENDTIME); //设置ANDROID客户端在此时间区间内展示消息
 
-            $type = empty($config["type"]) ? "simple" : $config["type"];
-            $body = empty($config["body"]) ? "测试内容" : $config["body"];
-            $logo = empty($config["logo"]) ? "" : $config["logo"];
-            $logourl = empty($config["logourl"]) ? "simple" : $config["logourl"];
-            $title = empty($config["title"]) ? "测试标题" : $config["title"];
-            // 如下有两个推送模版，一个简单一个高级，可以互相切换使用。
-            if ($config["type"]=="SIMPLE") {
-                // APN简单推送
-                $apn = new \IGtAPNPayload();
-                $alertmsg=new \SimpleAlertMsg();
-                $alertmsg->alertMsg=$body;
-                $apn->alertMsg=$alertmsg;
-                $apn->badge=2;
-                $apn->sound="";
-                $apn->add_customMsg("payload","payload");
-                $apn->contentAvailable=1;
-                $apn->category="ACTIONABLE";
-                $template->set_apnInfo($apn);
-            }
-            else
-            {
-                // APN高级推送
-                $apn = new \IGtAPNPayload();
-                $alertmsg=new \DictionaryAlertMsg();
-                $alertmsg->body=$body;
-                $alertmsg->actionLocKey="ActionLockey";
-                $alertmsg->locKey="LocKey";
-                $alertmsg->locArgs=array("locargs");
-                $alertmsg->launchImage="launchimage";
-                $alertmsg->set_logo=$logo;
-                $alertmsg->set_logoURL=$logourl;
-                // iOS8.2 支持
-                $alertmsg->title=$title; 
-                $alertmsg->titleLocKey="TitleLocKey"; 
-                $alertmsg->titleLocArgs=array("TitleLocArg");
+        $type = empty($config["type"]) ? "simple" : $config["type"];
+        $body = empty($config["body"]) ? "测试内容" : $config["body"];
+        $logo = empty($config["logo"]) ? "" : $config["logo"];
+        $logourl = empty($config["logourl"]) ? "simple" : $config["logourl"];
+        $title = empty($config["title"]) ? "测试标题" : $config["title"];
+        $payload = empty($config["payload"]) ? "payload" : $config["payload"];
+        // 如下有两个推送模版，一个简单一个高级，可以互相切换使用。
+        if ($config["type"]=="SIMPLE") {
+            // APN简单推送
+            $apn = new \IGtAPNPayload();
+            $alertmsg=new \SimpleAlertMsg();
+            $alertmsg->alertMsg=$body;
+            $apn->alertMsg=$alertmsg;
+            $apn->badge=2;
+            $apn->sound="";
+            $apn->add_customMsg("payload",$payload);
+            $apn->contentAvailable=1;
+            $apn->category="ACTIONABLE";
+            $template->set_apnInfo($apn);
+        }
+        else
+        {
+            // APN高级推送
+            $apn = new \IGtAPNPayload();
+            $alertmsg=new \DictionaryAlertMsg();
+            $alertmsg->body=$body;
+            $alertmsg->actionLocKey="ActionLockey";
+            $alertmsg->locKey="LocKey";
+            $alertmsg->locArgs=array("locargs");
+            $alertmsg->launchImage="launchimage";
+            $alertmsg->set_logo=$logo;
+            $alertmsg->set_logoURL=$logourl;
+            // iOS8.2 支持
+            $alertmsg->title=$title;
+            $alertmsg->titleLocKey="TitleLocKey";
+            $alertmsg->titleLocArgs=array("TitleLocArg");
 
-                $apn->alertMsg=$alertmsg;
-                $apn->badge=7;
-                $apn->sound=""; 
-                $apn->add_customMsg("payload","payload");
-                $apn->contentAvailable=1;
-                $apn->category="ACTIONABLE";
-                $template->set_apnInfo($apn);
-            }
-            return $template;
+            $apn->alertMsg=$alertmsg;
+            $apn->badge=7;
+            $apn->sound="";
+            $apn->add_customMsg("payload",$payload);
+            $apn->contentAvailable=1;
+            $apn->category="ACTIONABLE";
+            $template->set_apnInfo($apn);
+        }
+        return $template;
     }
 
     // 点击通知打开应用模板
@@ -351,6 +357,6 @@ class Getui
         //$template->set_duration(BEGINTIME,ENDTIME); //设置ANDROID客户端在此时间区间内展示消息
         return $template;
     }
-    
+
 
 }

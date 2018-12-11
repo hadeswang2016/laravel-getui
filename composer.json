@@ -1,10 +1,10 @@
 {
-    "name": "earnp/getui",
+    "name": "hadeswang/earnp-getui",
     "description": "Laravel 5 Getui Package",
     "authors": [
         {
-            "name": "lusong",
-            "email": "714628712@qq.com",
+            "name": "hadeswang",
+            "email": "2394160030@qq.com",
             "homepage": "https://phpartisan.cn"
         }
     ],
