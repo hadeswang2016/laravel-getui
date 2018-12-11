@@ -9,7 +9,7 @@
 # 安装拓展
 1、运行如下代码安装拓展包：
 ```
-composer require "earnp/getui:dev-master"
+composer require hadeswang/earnp-getui
 ```
 3.等待下载安装完成，需要在`config/app.php`中注册服务提供者同时注册下相应门面：
 ```php
